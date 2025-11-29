@@ -19,22 +19,13 @@ struct ContentView: View {
                         .textFieldStyle(.roundedBorder)
 
                     Button {
-                        vm.addHabit(name: newHabitName, kind: newHabitKind)
+                        vm.addHabit(name: newHabitName)
                         newHabitName = ""
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .imageScale(.large)
                     }
                 }
-                .padding(.horizontal)
-                
-                // Type picker (Checkbox / Text / Number)
-                Picker("Type", selection: $newHabitKind) {
-                    ForEach(HabitKind.allCases) { kind in
-                        Text(kind.label).tag(kind)
-                    }
-                }
-                .pickerStyle(.segmented)
                 .padding(.horizontal)
                 
                 // View range picker (1W / 1M / 1Y)

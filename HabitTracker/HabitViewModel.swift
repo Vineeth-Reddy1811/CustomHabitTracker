@@ -90,11 +90,11 @@ class HabitViewModel: ObservableObject {
 
     // MARK: - Habit CRUD
 
-    func addHabit(name: String, kind: HabitKind) {
+    func addHabit(name: String) {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
 
-        let newHabit = Habit(id: UUID(), name: trimmed, kind: kind, isCompletedToday: false)
+        let newHabit = Habit(id: UUID(), name: trimmed, kind: .checkbox, isCompletedToday: false)
         habits.append(newHabit)
     }
 
@@ -261,6 +261,17 @@ class HabitViewModel: ObservableObject {
         dayDict[habit.id] = value
         numberValues[key] = dayDict
     }
+    func updateKind(_ habit: Habit, to newKind: HabitKind) {
+        guard let index = habits.firstIndex(where: { $0.id == habit.id }) else { return }
+        habits[index].kind = newKind
 
+        // Optional: clean up data from old type
+        // For example, reset completions/text/number for this habit if desired:
+        // for (key, set) in completions {
+        //     var updated = set
+        //     updated.remove(habit.id)
+        //     completions[key] = updated
+        // }
+    }
     
 }
