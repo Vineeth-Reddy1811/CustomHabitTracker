@@ -68,25 +68,46 @@ struct HabitGridView: View {
                 Color.accentColor
                 Text("Date")
                     .font(.caption.bold())
-                    .foregroundColor(Color(.systemBackground)) // good contrast in both modes
+                    .foregroundColor(Color(.systemBackground))
                     .lineLimit(1)
                     .truncationMode(.tail)
             }
             .frame(width: columnWidth, height: rowHeight)
 
-            // Habit header cells with stats / type info
+            // Habit header cells with stats + type dropdown
             ForEach(vm.habits) { habit in
-                ZStack {
-                    Color.accentColor
-                    Text(vm.completionLabel(for: habit))
-                        .font(.caption2.bold())
-                        .foregroundColor(Color(.systemBackground))
-                        .lineLimit(2)
-                        .multilineTextAlignment(.center)
-                        .truncationMode(.tail)
-                        .padding(.horizontal, 2)
+                Menu {
+                    // 👇 Picker-style menu for type
+                    Picker("Type", selection: Binding<HabitKind>(
+                        get: { habit.kind },
+                        set: { newKind in
+                            vm.updateKind(habit, to: newKind)
+                        }
+                    )) {
+                        ForEach(HabitKind.allCases) { kind in
+                            Text(kind.label).tag(kind)
+                        }
+                    }
+                } label: {
+                    ZStack {
+                        Color.accentColor
+                        VStack(spacing: 2) {
+                            Text(vm.completionLabel(for: habit))
+                                .font(.caption2.bold())
+                                .foregroundColor(Color(.systemBackground))
+                                .lineLimit(2)
+                                .multilineTextAlignment(.center)
+                                .truncationMode(.tail)
+                                .padding(.horizontal, 2)
+
+                            // Small type indicator under the name
+                            Text(habit.kind.label)
+                                .font(.caption2)
+                                .foregroundColor(Color(.systemBackground).opacity(0.8))
+                        }
+                    }
+                    .frame(width: columnWidth, height: rowHeight)
                 }
-                .frame(width: columnWidth, height: rowHeight)
             }
         }
     }
